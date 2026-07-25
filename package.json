@@ -1,0 +1,33 @@
+{
+  "name": "node-nexus",
+  "version": "1.0.0",
+  "description": "Node Nexus is a self-hosted developer collaboration, file-storage, automation, job-processing, API-testing, deployment, logging, monitoring, and real-time communication platform built primarily with Node.js. All for the purpose of learning Node.js.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "check": "node --check src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sai-Anirudh-Meduri/node-nexus.git"
+  },
+  "keywords": [
+    "nodejs",
+    "automation",
+    "monitoring",
+    "messaging",
+    "file-processing",
+    "deployment"
+  ],
+  "author": "Sai Anirudh Meduri",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "bugs": {
+    "url": "https://github.com/Sai-Anirudh-Meduri/node-nexus/issues"
+  },
+  "homepage": "https://github.com/Sai-Anirudh-Meduri/node-nexus#readme"
+}
