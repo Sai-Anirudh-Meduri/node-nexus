@@ -1,46 +1,54 @@
 import http from "node:http";
 
-function sendJson(response, statusCode, data) {
-  const body = JSON.stringify(data);
+import { Router } from "../router/Router.js";
+import { registerSystemRoutes } from "../routes/systemRoutes.js";
 
-  response.writeHead(statusCode, {
-    "Content-Type": "application/json; charset=utf-8",
-    "Content-Length": Buffer.byteLength(body),
-  });
+function addResponseHelpers(response) {
+  response.sendJson = function sendJson(statusCode, data) {
+    const body = JSON.stringify(data);
 
-  response.end(body);
+    response.writeHead(statusCode, {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": Buffer.byteLength(body),
+    });
+
+    response.end(body);
+  };
 }
 
 export function createServer() {
-  return http.createServer((request, response) => {
-    const method = request.method;
+  const router = new Router();
 
-    const url = new URL(
-      request.url ?? "/",
-      `http://${request.headers.host ?? "localhost"}`,
-    );
+  registerSystemRoutes(router);
 
-    if (method === "GET" && url.pathname === "/") {
-      sendJson(response, 200, {
-        name: "Node Nexus",
-        message: "Node Nexus server is running.",
-      });
-      return;
+  return http.createServer(async (request, response) => {
+    addResponseHelpers(response);
+
+    try {
+      const routeFound = await router.handle(request, response);
+
+      if (!routeFound) {
+        const url = new URL(
+          request.url ?? "/",
+          `http://${request.headers.host ?? "localhost"}`,
+        );
+
+        response.sendJson(404, {
+          error: "Route not found",
+          method: request.method,
+          path: url.pathname,
+        });
+      }
+    } catch (error) {
+      console.error("Request error:", error);
+
+      if (!response.headersSent) {
+        response.sendJson(500, {
+          error: "Internal server error",
+        });
+      } else {
+        response.end();
+      }
     }
-
-    if (method === "GET" && url.pathname === "/api/health") {
-      sendJson(response, 200, {
-        status: "healthy",
-        uptimeSeconds: process.uptime(),
-        timestamp: new Date().toISOString(),
-      });
-      return;
-    }
-
-    sendJson(response, 404, {
-      error: "Route not found",
-      method,
-      path: url.pathname,
-    });
   });
 }
