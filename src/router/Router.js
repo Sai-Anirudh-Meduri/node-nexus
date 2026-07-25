@@ -15,6 +15,10 @@ export class Router {
     this.register("GET", path, handler);
   }
 
+  post(path, handler) {
+    this.register("POST", path, handler);
+  }
+
   async handle(request, response) {
     const url = new URL(
       request.url ?? "/",

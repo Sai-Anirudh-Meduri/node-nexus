@@ -2,6 +2,7 @@ import http from "node:http";
 
 import { Router } from "../router/Router.js";
 import { registerSystemRoutes } from "../routes/systemRoutes.js";
+import { registerMessageRoutes } from "../routes/messageRoutes.js";
 
 function addResponseHelpers(response) {
   response.sendJson = function sendJson(statusCode, data) {
@@ -20,6 +21,7 @@ export function createServer() {
   const router = new Router();
 
   registerSystemRoutes(router);
+  registerMessageRoutes(router);
 
   return http.createServer(async (request, response) => {
     addResponseHelpers(response);
@@ -43,8 +45,11 @@ export function createServer() {
       console.error("Request error:", error);
 
       if (!response.headersSent) {
-        response.sendJson(500, {
-          error: "Internal server error",
+        response.sendJson(error.statusCode ?? 500, {
+          error:
+            error.statusCode !== undefined
+              ? error.message
+              : "Internal server error",
         });
       } else {
         response.end();
