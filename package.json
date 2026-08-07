@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/Sai-Anirudh-Meduri/node-nexus/issues"
   },
-  "homepage": "https://github.com/Sai-Anirudh-Meduri/node-nexus#readme"
+  "homepage": "https://github.com/Sai-Anirudh-Meduri/node-nexus#readme",
+  "dependencies": {
+    "ws": "^8.21.3"
+  }
 }

@@ -1,7 +1,9 @@
 import { environment } from "./config/environment.js";
 import { createServer } from "./server/createServer.js";
+import { createWebSocketServer } from "./realtime/createWebSocketServer.js";
 
 const server = createServer();
+const webSocketServer = createWebSocketServer(server);
 
 server.on("error", (error) => {
   console.error("Server error:", error);
@@ -21,6 +23,8 @@ Health:      http://${environment.host}:${environment.port}/api/health
 function shutDown(signal) {
   console.log(`\nReceived ${signal}. Closing Node Nexus...`);
 
+  webSocketServer.close();
+  
   server.close((error) => {
     if (error) {
       console.error("Shutdown error:", error);

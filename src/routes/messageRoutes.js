@@ -1,11 +1,43 @@
 import { readJsonBody } from "../http/readJsonBody.js";
-
-const messages = [];
+import {
+  getMessages,
+  saveMessages,
+} from "../data/messageStore.js";
 
 export function registerMessageRoutes(router) {
-  router.get("/api/messages", async (_request, response) => {
+  router.get("/api/messages", async (request, response) => {
+    const messages = await getMessages();
+
+    const search = request.query.search?.trim().toLowerCase();
+
+    const filteredMessages = search
+      ? messages.filter((message) =>
+          message.content.toLowerCase().includes(search),
+        )
+      : messages;
+
     response.sendJson(200, {
-      messages,
+      messages: filteredMessages,
+    });
+  });
+
+  router.get("/api/messages/:messageId", async (request, response) => {
+    const messages = await getMessages();
+
+    const message = messages.find(
+      (currentMessage) =>
+        currentMessage.id === request.params.messageId,
+    );
+
+    if (!message) {
+      response.sendJson(404, {
+        error: "Message not found.",
+      });
+      return;
+    }
+
+    response.sendJson(200, {
+      message,
     });
   });
 
@@ -21,6 +53,8 @@ export function registerMessageRoutes(router) {
       return;
     }
 
+    const messages = await getMessages();
+
     const message = {
       id: crypto.randomUUID(),
       content,
@@ -29,8 +63,34 @@ export function registerMessageRoutes(router) {
 
     messages.push(message);
 
+    await saveMessages(messages);
+
     response.sendJson(201, {
       message,
+    });
+  });
+
+  router.delete("/api/messages/:messageId", async (request, response) => {
+    const messages = await getMessages();
+
+    const messageIndex = messages.findIndex(
+      (message) =>
+        message.id === request.params.messageId,
+    );
+
+    if (messageIndex === -1) {
+      response.sendJson(404, {
+        error: "Message not found.",
+      });
+      return;
+    }
+
+    const [deletedMessage] = messages.splice(messageIndex, 1);
+
+    await saveMessages(messages);
+
+    response.sendJson(200, {
+      message: deletedMessage,
     });
   });
 }

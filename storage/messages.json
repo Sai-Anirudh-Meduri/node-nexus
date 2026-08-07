@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fe7d9bf9-365d-4489-a7e4-2071808da335",
+    "content": "This message should survive a restart",
+    "createdAt": "2026-08-07T21:22:40.087Z"
+  },
+  {
+    "id": "06d6dfad-27fe-49e2-b121-5e918c2d2acd",
+    "content": "This WebSocket message should persist",
+    "createdAt": "2026-08-07T21:56:46.671Z"
+  }
+]
