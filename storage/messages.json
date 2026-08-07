@@ -1,22 +1,11 @@
 [
   {
-    "id": "fe7d9bf9-365d-4489-a7e4-2071808da335",
-    "content": "This message should survive a restart",
-    "createdAt": "2026-08-07T21:22:40.087Z"
-  },
-  {
-    "id": "06d6dfad-27fe-49e2-b121-5e918c2d2acd",
-    "content": "This WebSocket message should persist",
-    "createdAt": "2026-08-07T21:56:46.671Z"
-  },
-  {
-    "id": "978f47d8-6275-43f0-878e-393270a8225a",
-    "content": "Hello",
-    "createdAt": "2026-08-07T22:00:14.638Z"
-  },
-  {
-    "id": "82b7ebc9-1384-42ec-8e69-18d9720a14f4",
-    "content": "Testing structured WebSocket events",
-    "createdAt": "2026-08-07T22:02:32.260Z"
+    "id": "0a05df5a-b039-49a4-8b58-58fbe4bd8d10",
+    "sender": {
+      "id": "746ca414-a4db-4ec0-8435-8ed02ad2476c",
+      "name": "Sai"
+    },
+    "content": "Hello Alex",
+    "createdAt": "2026-08-07T22:25:14.859Z"
   }
 ]
