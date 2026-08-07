@@ -1,8 +1,26 @@
 import { WebSocketServer, WebSocket } from "ws";
+
 import {
   getMessages,
   saveMessages,
 } from "../data/messageStore.js";
+
+function sendEvent(socket, type, data = {}) {
+  socket.send(
+    JSON.stringify({
+      type,
+      ...data,
+    }),
+  );
+}
+
+function broadcast(webSocketServer, type, data = {}) {
+  for (const client of webSocketServer.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      sendEvent(client, type, data);
+    }
+  }
+}
 
 export function createWebSocketServer(server) {
   const webSocketServer = new WebSocketServer({
@@ -13,60 +31,54 @@ export function createWebSocketServer(server) {
   webSocketServer.on("connection", (socket) => {
     console.log("WebSocket client connected.");
 
-    socket.send(
-      JSON.stringify({
-        type: "connection",
-        message: "Connected to Node Nexus.",
-      }),
-    );
+    sendEvent(socket, "connection:ready", {
+      message: "Connected to Node Nexus.",
+    });
 
     socket.on("message", async (data) => {
       try {
-        const content = data.toString().trim();
+        const event = JSON.parse(data.toString());
 
-        if (!content) {
-          socket.send(
-            JSON.stringify({
-              type: "error",
+        if (event.type === "message:create") {
+          const content = event.content?.trim();
+
+          if (!content) {
+            sendEvent(socket, "error", {
               message: "Message content is required.",
-            }),
-          );
+            });
+            return;
+          }
+
+          const messages = await getMessages();
+
+          const message = {
+            id: crypto.randomUUID(),
+            content,
+            createdAt: new Date().toISOString(),
+          };
+
+          messages.push(message);
+
+          await saveMessages(messages);
+
+          console.log("WebSocket message saved:", message.content);
+
+          broadcast(webSocketServer, "message:created", {
+            message,
+          });
+
           return;
         }
 
-        const messages = await getMessages();
-
-        const message = {
-          id: crypto.randomUUID(),
-          content,
-          createdAt: new Date().toISOString(),
-        };
-
-        messages.push(message);
-
-        await saveMessages(messages);
-
-        console.log("WebSocket message saved:", message.content);
-
-        for (const client of webSocketServer.clients) {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(
-              JSON.stringify({
-                type: "message",
-                message,
-              }),
-            );
-          }
-        }
+        sendEvent(socket, "error", {
+          message: `Unknown event type: ${event.type}`,
+        });
       } catch (error) {
         console.error("WebSocket message error:", error);
 
-        socket.send(
-          JSON.stringify({
-            type: "error",
-            message: "Unable to process message.",
-          }),
-        );
+        sendEvent(socket, "error", {
+          message: "WebSocket data must contain valid JSON.",
+        });
       }
     });
 

@@ -8,5 +8,15 @@
     "id": "06d6dfad-27fe-49e2-b121-5e918c2d2acd",
     "content": "This WebSocket message should persist",
     "createdAt": "2026-08-07T21:56:46.671Z"
+  },
+  {
+    "id": "978f47d8-6275-43f0-878e-393270a8225a",
+    "content": "Hello",
+    "createdAt": "2026-08-07T22:00:14.638Z"
+  },
+  {
+    "id": "82b7ebc9-1384-42ec-8e69-18d9720a14f4",
+    "content": "Testing structured WebSocket events",
+    "createdAt": "2026-08-07T22:02:32.260Z"
   }
 ]
