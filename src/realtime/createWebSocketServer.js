@@ -121,6 +121,56 @@ export function createWebSocketServer(server) {
           return;
         }
 
+        if (event.type === "typing:start") {
+          broadcast(
+            webSocketServer,
+            "typing:started",
+            {
+              user,
+            },
+            socket,
+          );
+
+          return;
+        }
+
+        if (event.type === "typing:stop") {
+          broadcast(
+            webSocketServer,
+            "typing:stopped",
+            {
+              user,
+            },
+            socket,
+          );
+
+          return;
+        }
+
+        if (event.type === "message:read") {
+          const messageId = event.messageId?.trim();
+
+          if (!messageId) {
+            sendEvent(socket, "error", {
+              message: "messageId is required.",
+            });
+            return;
+          }
+
+          broadcast(
+            webSocketServer,
+            "message:read",
+            {
+              messageId,
+              user,
+              readAt: new Date().toISOString(),
+            },
+            socket,
+          );
+
+          return;
+        }
+
         sendEvent(socket, "error", {
           message: `Unknown event type: ${event.type}`,
         });

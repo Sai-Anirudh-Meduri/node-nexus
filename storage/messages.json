@@ -7,5 +7,14 @@
     },
     "content": "Hello Alex",
     "createdAt": "2026-08-07T22:25:14.859Z"
+  },
+  {
+    "id": "367b1995-3bb5-4a33-aa71-d58ac82e8f17",
+    "sender": {
+      "id": "c7efd460-f7ad-4baf-91c1-d6c59a226ec8",
+      "name": "Sai"
+    },
+    "content": "Read this message",
+    "createdAt": "2026-08-08T06:29:42.264Z"
   }
 ]
