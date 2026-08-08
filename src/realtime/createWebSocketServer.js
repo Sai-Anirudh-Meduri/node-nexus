@@ -14,6 +14,36 @@ function sendEvent(socket, type, data = {}) {
   );
 }
 
+function joinRoom(socket, roomId) {
+  if (!socket.rooms) {
+    socket.rooms = new Set();
+  }
+
+  socket.rooms.add(roomId);
+}
+
+function leaveRoom(socket, roomId) {
+  socket.rooms?.delete(roomId);
+}
+
+function broadcastToRoom(
+  webSocketServer,
+  roomId,
+  type,
+  data = {},
+  excludedSocket = null,
+) {
+  for (const client of webSocketServer.clients) {
+    if (
+      client.readyState === WebSocket.OPEN &&
+      client !== excludedSocket &&
+      client.rooms?.has(roomId)
+    ) {
+      sendEvent(client, type, data);
+    }
+  }
+}
+
 function broadcast(webSocketServer, type, data = {}, excludedSocket = null) {
   for (const client of webSocketServer.clients) {
     if (
@@ -61,6 +91,8 @@ export function createWebSocketServer(server) {
 
     socket.user = user;
 
+    socket.rooms = new Set();
+
     console.log(`${user.name} connected.`);
 
     sendEvent(socket, "connection:ready", {
@@ -84,6 +116,7 @@ export function createWebSocketServer(server) {
 
         if (event.type === "message:create") {
           const content = event.content?.trim();
+          const roomId = event.roomId?.trim();
 
           if (!content) {
             sendEvent(socket, "error", {
@@ -92,10 +125,25 @@ export function createWebSocketServer(server) {
             return;
           }
 
+          if (!roomId) {
+            sendEvent(socket, "error", {
+              message: "roomId is required.",
+            });
+            return;
+          }
+
+          if (!socket.rooms.has(roomId)) {
+            sendEvent(socket, "error", {
+              message: `You are not a member of room: ${roomId}`,
+            });
+            return;
+          }
+
           const messages = await getMessages();
 
           const message = {
             id: crypto.randomUUID(),
+            roomId,
             sender: user,
             content,
             createdAt: new Date().toISOString(),
@@ -105,9 +153,9 @@ export function createWebSocketServer(server) {
 
           await saveMessages(messages);
 
-          console.log(`${user.name}: ${message.content}`);
+          console.log(`[${roomId}] ${user.name}: ${message.content}`);
 
-          broadcast(webSocketServer, "message:created", {
+          broadcastToRoom(webSocketServer, roomId, "message:created", {
             message,
           });
 
@@ -122,10 +170,21 @@ export function createWebSocketServer(server) {
         }
 
         if (event.type === "typing:start") {
-          broadcast(
+          const roomId = event.roomId?.trim();
+
+          if (!roomId || !socket.rooms.has(roomId)) {
+            sendEvent(socket, "error", {
+              message: "You must join the room before typing.",
+            });
+            return;
+          }
+
+          broadcastToRoom(
             webSocketServer,
+            roomId,
             "typing:started",
             {
+              roomId,
               user,
             },
             socket,
@@ -135,10 +194,21 @@ export function createWebSocketServer(server) {
         }
 
         if (event.type === "typing:stop") {
-          broadcast(
+          const roomId = event.roomId?.trim();
+
+          if (!roomId || !socket.rooms.has(roomId)) {
+            sendEvent(socket, "error", {
+              message: "You must join the room before typing.",
+            });
+            return;
+          }
+
+          broadcastToRoom(
             webSocketServer,
+            roomId,
             "typing:stopped",
             {
+              roomId,
               user,
             },
             socket,
@@ -167,6 +237,60 @@ export function createWebSocketServer(server) {
             },
             socket,
           );
+
+          return;
+        }
+
+        if (event.type === "room:join") {
+          const roomId = event.roomId?.trim();
+
+          if (!roomId) {
+            sendEvent(socket, "error", {
+              message: "roomId is required.",
+            });
+            return;
+          }
+
+          joinRoom(socket, roomId);
+
+          sendEvent(socket, "room:joined", {
+            roomId,
+          });
+
+          broadcastToRoom(
+            webSocketServer,
+            roomId,
+            "room:user_joined",
+            {
+              roomId,
+              user,
+            },
+            socket,
+          );
+
+          return;
+        }
+
+        if (event.type === "room:leave") {
+          const roomId = event.roomId?.trim();
+
+          if (!roomId) {
+            sendEvent(socket, "error", {
+              message: "roomId is required.",
+            });
+            return;
+          }
+
+          leaveRoom(socket, roomId);
+
+          sendEvent(socket, "room:left", {
+            roomId,
+          });
+
+          broadcastToRoom(webSocketServer, roomId, "room:user_left", {
+            roomId,
+            user,
+          });
 
           return;
         }
