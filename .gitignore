@@ -13,6 +13,7 @@ coverage/
 
 storage/*
 !storage/messages.json
+!storage/rooms.json
 uploads/
 artifacts/
 temp/

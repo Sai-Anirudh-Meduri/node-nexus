@@ -8,13 +8,22 @@ export function registerMessageRoutes(router) {
   router.get("/api/messages", async (request, response) => {
     const messages = await getMessages();
 
+    const roomId = request.query.roomId?.trim();
     const search = request.query.search?.trim().toLowerCase();
 
-    const filteredMessages = search
-      ? messages.filter((message) =>
-          message.content.toLowerCase().includes(search),
-        )
-      : messages;
+    let filteredMessages = messages;
+
+    if (roomId) {
+      filteredMessages = filteredMessages.filter(
+        (message) => message.roomId === roomId,
+      );
+    }
+
+    if (search) {
+      filteredMessages = filteredMessages.filter((message) =>
+        message.content.toLowerCase().includes(search),
+      );
+    }
 
     response.sendJson(200, {
       messages: filteredMessages,

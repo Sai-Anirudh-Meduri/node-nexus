@@ -3,6 +3,7 @@ import http from "node:http";
 import { Router } from "../router/Router.js";
 import { registerSystemRoutes } from "../routes/systemRoutes.js";
 import { registerMessageRoutes } from "../routes/messageRoutes.js";
+import { registerRoomRoutes } from "../routes/roomRoutes.js";
 
 function addResponseHelpers(response) {
   response.sendJson = function sendJson(statusCode, data) {
@@ -21,6 +22,7 @@ export function createServer() {
   const router = new Router();
 
   registerSystemRoutes(router);
+  registerRoomRoutes(router);
   registerMessageRoutes(router);
 
   return http.createServer(async (request, response) => {

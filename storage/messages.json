@@ -1,22 +1,12 @@
 [
   {
-    "id": "29ad4735-a70a-48f9-bdee-244b7513801f",
-    "roomId": "general",
+    "id": "d3181198-f962-45e8-8191-b10b630d856d",
+    "roomId": "e9713d3f-b2bf-4c53-b691-0ef06ed09983",
     "sender": {
-      "id": "489ae048-7427-4f06-be0b-aeb2bdbd5f40",
+      "id": "c3d820b2-c6fb-47f7-990c-98a48aefca9d",
       "name": "Sai"
     },
-    "content": "Hello general room",
-    "createdAt": "2026-08-08T20:47:52.770Z"
-  },
-  {
-    "id": "531efcf4-0b5c-4a18-a5ac-0f3e72c85f8a",
-    "roomId": "backend",
-    "sender": {
-      "id": "d44c0181-b5d5-4716-ba43-d625718625a9",
-      "name": "Jordan"
-    },
-    "content": "Backend-only message",
-    "createdAt": "2026-08-08T20:48:12.918Z"
+    "content": "Hello real general room",
+    "createdAt": "2026-08-08T21:57:14.486Z"
   }
 ]

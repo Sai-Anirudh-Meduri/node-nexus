@@ -1,4 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws";
+import { getRooms } from "../data/roomStore.js";
 
 import {
   getMessages,
@@ -251,10 +252,23 @@ export function createWebSocketServer(server) {
             return;
           }
 
+          const rooms = await getRooms();
+
+          const room = rooms.find(
+            (currentRoom) => currentRoom.id === roomId,
+          );
+
+          if (!room) {
+            sendEvent(socket, "error", {
+              message: "Room not found.",
+            });
+            return;
+          }
+
           joinRoom(socket, roomId);
 
           sendEvent(socket, "room:joined", {
-            roomId,
+            room,
           });
 
           broadcastToRoom(
@@ -262,7 +276,7 @@ export function createWebSocketServer(server) {
             roomId,
             "room:user_joined",
             {
-              roomId,
+              room,
               user,
             },
             socket,
