@@ -1,5 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { getRooms } from "../data/roomStore.js";
+import { getUsers } from "../data/userStore.js";
 
 import {
   getMessages,
@@ -68,30 +69,39 @@ export function createWebSocketServer(server) {
     path: "/ws",
   });
 
-  webSocketServer.on("connection", (socket, request) => {
+  webSocketServer.on("connection", async (socket, request) => {
     const url = new URL(
       request.url ?? "/ws",
       `http://${request.headers.host ?? "localhost"}`,
     );
 
-    const name = url.searchParams.get("name")?.trim();
+    const userId = url.searchParams.get("userId")?.trim();
 
-    if (!name) {
+    if (!userId) {
       sendEvent(socket, "error", {
-        message: "A user name is required.",
+        message: "userId is required.",
       });
 
-      socket.close(1008, "User name required.");
+      socket.close(1008, "User ID required.");
       return;
     }
 
-    const user = {
-      id: crypto.randomUUID(),
-      name,
-    };
+    const users = await getUsers();
+
+    const user = users.find(
+      (currentUser) => currentUser.id === userId,
+    );
+
+    if (!user) {
+      sendEvent(socket, "error", {
+        message: "User not found.",
+      });
+
+      socket.close(1008, "User not found.");
+      return;
+    }
 
     socket.user = user;
-
     socket.rooms = new Set();
 
     console.log(`${user.name} connected.`);

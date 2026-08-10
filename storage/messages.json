@@ -8,5 +8,16 @@
     },
     "content": "Hello real general room",
     "createdAt": "2026-08-08T21:57:14.486Z"
+  },
+  {
+    "id": "1863afba-dbd5-46a3-8eeb-7901aa7e3d1e",
+    "roomId": "e9713d3f-b2bf-4c53-b691-0ef06ed09983",
+    "sender": {
+      "id": "7b62bdd4-d6be-4461-af5a-e7787685bc93",
+      "name": "Sai",
+      "createdAt": "2026-08-09T19:57:32.283Z"
+    },
+    "content": "Testing persistent Sai identity",
+    "createdAt": "2026-08-10T21:47:10.375Z"
   }
 ]
