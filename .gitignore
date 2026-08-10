@@ -15,6 +15,7 @@ storage/*
 !storage/messages.json
 !storage/rooms.json
 !storage/users.json
+!storage/memberships.json
 uploads/
 artifacts/
 temp/

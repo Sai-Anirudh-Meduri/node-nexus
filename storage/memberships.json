@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f871db0a-e0fb-430c-be39-76b4c5798916",
+    "userId": "7b62bdd4-d6be-4461-af5a-e7787685bc93",
+    "roomId": "e9713d3f-b2bf-4c53-b691-0ef06ed09983",
+    "role": "member",
+    "joinedAt": "2026-08-10T22:11:55.236Z"
+  },
+  {
+    "id": "a0972148-0893-405f-9019-32cbe1effd64",
+    "userId": "6dd15a19-a2be-4ead-8299-f204fafd74be",
+    "roomId": "e9713d3f-b2bf-4c53-b691-0ef06ed09983",
+    "role": "member",
+    "joinedAt": "2026-08-10T22:12:02.380Z"
+  }
+]

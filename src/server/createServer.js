@@ -5,6 +5,7 @@ import { registerSystemRoutes } from "../routes/systemRoutes.js";
 import { registerMessageRoutes } from "../routes/messageRoutes.js";
 import { registerRoomRoutes } from "../routes/roomRoutes.js";
 import { registerUserRoutes } from "../routes/userRoutes.js";
+import { registerMembershipRoutes } from "../routes/membershipRoutes.js";
 
 function addResponseHelpers(response) {
   response.sendJson = function sendJson(statusCode, data) {
@@ -25,6 +26,7 @@ export function createServer() {
   registerSystemRoutes(router);
   registerUserRoutes(router);
   registerRoomRoutes(router);
+  registerMembershipRoutes(router);
   registerMessageRoutes(router);
 
   return http.createServer(async (request, response) => {

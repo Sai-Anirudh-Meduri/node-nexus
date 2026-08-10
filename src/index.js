@@ -17,6 +17,7 @@ Node Nexus is running.
 Environment: ${environment.nodeEnvironment}
 Address:     http://${environment.host}:${environment.port}
 Users:       http://${environment.host}:${environment.port}/api/users
+Memberships: http://${environment.host}:${environment.port}/api/memberships
 Rooms:       http://${environment.host}:${environment.port}/api/rooms
 Messages:    http://${environment.host}:${environment.port}/api/messages
 Health:      http://${environment.host}:${environment.port}/api/health
