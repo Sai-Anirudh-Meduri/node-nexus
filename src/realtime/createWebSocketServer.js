@@ -1,6 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import { getRooms } from "../data/roomStore.js";
 import { getUsers } from "../data/userStore.js";
+import { getMemberships } from "../data/membershipStore.js";
 
 import {
   getMessages,
@@ -275,10 +276,26 @@ export function createWebSocketServer(server) {
             return;
           }
 
+          const memberships = await getMemberships();
+
+          const membership = memberships.find(
+            (currentMembership) =>
+              currentMembership.userId === user.id &&
+              currentMembership.roomId === roomId,
+          );
+
+          if (!membership) {
+            sendEvent(socket, "error", {
+              message: "You are not a member of this room.",
+            });
+            return;
+          }
+
           joinRoom(socket, roomId);
 
           sendEvent(socket, "room:joined", {
             room,
+            membership,
           });
 
           broadcastToRoom(
